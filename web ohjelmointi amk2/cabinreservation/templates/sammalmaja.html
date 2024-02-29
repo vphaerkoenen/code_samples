@@ -1,0 +1,21 @@
+{% extends 'cabinbase.html' %}
+
+{% block content %}
+    <form action="/reserve"  method="post">
+        <h1>Sammalmaja</h1>
+            <input type="hidden" name="location" value="Sammalmaja">
+
+        <div>
+            <img src="static/images/sammalmaja.jpg" >
+        </div>
+
+        <button>Varaa</button>
+    </form>
+
+    <div>
+        <p>Sammalmajalla viihdyt, vaikka talvellakin. Sammalmaja<br>
+        on lähellä asutusta ja palveluita tarjoten vähemmän metsäisen kokemuksen kuin<br>
+        esimerkiksi takasyrjä. Tuvasta löytyy työkalut halkovajan korjaamista varten,<br>
+        tarvikkeet asukas valitettavasti joutuu kustantamaan itse.</p>
+    </div>
+{% endblock %}

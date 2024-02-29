@@ -1,0 +1,41 @@
+{% extends 'cabinbase.html' %}
+
+{% block welcome %}
+<p>Tervetuloa Takasurkeen Lomakylän sivuille! Meiltä löydät korkeatasoista majoitusta niin lyhyeksi kuin
+    pitkäksikin aikaa.<br> Toimimme laajalla alueella ja ympäri vuoden. Klikkaamalla mökin kuvaa
+    saat lisätietoa mökistä.</p>
+{% endblock %}
+
+{% block content %}
+
+
+<h1 id="currentcabin">Vuokrattavat mökkimme</h1>
+
+
+<form id="imageform" >
+   <a id="kylmala" href="{{url_for('users_bp.kylmala')}}"><img onmouseover="displayKylmala()" onmouseout="noDisplay()" src="static/images/kylmala.jpg"></a>
+   <a id="rauhala" href="{{url_for('users_bp.rauhala')}}"><img onmouseover="displayRauhala()" onmouseout="noDisplay()" src="static/images/rauhala.jpg"></a>
+   <a id="sammalmaja" href="{{url_for('users_bp.sammalmaja')}}"><img onmouseover="displaySammalmaja()" onmouseout="noDisplay()" src="static/images/sammalmaja.jpg"></a>
+   <a id="takasyrja" href="{{url_for('users_bp.takasyrja')}}"><img onmouseover="displayTakasyrja()" onmouseout="noDisplay()" src="static/images/takasyrja.jpg"></a>
+</form>
+
+
+<script>
+    function displayKylmala() {
+        document.getElementById("currentcabin").textContent = "Vuokrattavat mökkimme: Kylmälä";
+    }
+    function displayRauhala() {
+        document.getElementById("currentcabin").textContent = "Vuokrattavat mökkimme: Rauhala";
+    }
+    function displaySammalmaja() {
+        document.getElementById("currentcabin").textContent = "Vuokrattavat mökkimme: Sammalmaja";
+    }
+    function displayTakasyrja() {
+        document.getElementById("currentcabin").textContent = "Vuokrattavat mökkimme: Takasyrjä";
+    }
+    function noDisplay() {
+        document.getElementById("currentcabin").textContent = "Vuokrattavat mökkimme";
+    }
+    </script>
+
+{% endblock %}

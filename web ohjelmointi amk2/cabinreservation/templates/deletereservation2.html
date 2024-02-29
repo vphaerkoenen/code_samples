@@ -1,0 +1,32 @@
+{% extends 'cabinbase.html' %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div style="margin-left:10px;font-size:1.5rem;color:yellow;">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+{% endwith %}
+
+   <h1>Poista varaus</h1>
+<form   method="post"  action="/login">
+ <table>
+        <th>Paikka<th>Varaajan sposti<th>Alkupäivä<th>Loppupäivä
+        {% for user in users %}
+        <tr>
+            <td>{{user['reserved']}}
+            <td>{{user['user_email']}}<input name="user_email" type="hidden" value="{{user['user_email']}}"></td>
+            <td>{{user['startdate']}}<input name="startdate" type="hidden" value="{{user['startdate']}}"></td>
+            <td>{{user['enddate']}}<input name="enddate" type="hidden" value="{{user['enddate']}}"></td>
+            <td><button style="height:30px;width:220px;" >Poista varaus(vaatii kirjautumisen)</button></td>
+            <td><input name="id_for_reserve" type="hidden" value="{{user['id_for_reserve']}}"></td>
+            <td><input name="password" type="hidden" value="{{user['password']}}"></td>
+        </tr>
+        {% endfor %}
+        </th></th></th></th>
+</table>
+</form>
+{% endblock %}
+
