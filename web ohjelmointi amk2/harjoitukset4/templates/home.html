@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<table>
+    {% for student in students %}
+    <tr>
+        <td><a id="homeNumber" href="{{url_for('modifyPage',name=student['name']) }}" type="hidden">{{ student["student_number"] }}</a></td>
+        <td id="homeName" class="name" >{{ student["name"] }}</td>
+        <td id="homeDegree" >{{ student["degree"] }}</td>
+        <td id="homeCredits" >{{ student["credits"] }}</td>
+        <td><a href="{{url_for('deleteStudent',name=student['name'])}}" >Delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form id="homeForm" method="post">
+<select name="homeDegree" form="homeForm" >
+    <option value="kaikki" >kaikki</option>
+    <option value="it" >it</option>
+    <option value="art" >art</option>
+</select>
+    <input type="submit" value="submit" >
+</form>
+{% endblock %}

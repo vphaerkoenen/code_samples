@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container has-text-centered">
+    <h1 class="mb-4 title">All the students</h1>
+</div>
+<table class="table is-striped is-fullwidth is-bordered" >
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Study Field</th>
+            <th>Credits</th>
+        </tr>
+    </thead>
+    {% for s in students %}
+        <tr>
+            <td>{{ s["name"] }}</td>
+            <td>{{ s["study_field"] }}</td>
+            <td>{{ s["credits"] }}</td>
+        </tr>
+    {% else %}
+        No students found
+    {% endfor %}
+
+</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>StudentBook</title>
+    <link rel="stylesheet" href="{{ url_for('student_bp.static', filename='styling.css')}}">
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="static/logic.js" ></script>
+
+
+</head>
+<body >
+<div style="margin-left:20px;margin-top:50px;">
+    <h2 style="position:relative;" ><a href="/home">Home</a></h2>
+    <h2 style="position:relative; left:100px; top:-48px; "><a href="/add" >Add</a></h2>
+</div>
+<div class="contentDiv"  >
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
