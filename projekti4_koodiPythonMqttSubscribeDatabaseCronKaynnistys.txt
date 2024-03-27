@@ -1,0 +1,76 @@
+
+import paho.mqtt.client as mqtt
+import os
+import mysql.connector
+import time
+
+MQTT_ADDRESS = "192.168.201.31"
+MQTT_USER = "pi"
+MQTT_PASSWORD = "pi"
+MQTT_TOPIC_TEMP = "Temperature"
+MQTT_TOPIC_HUMD = "Humidity"
+MQTT_TOPIC_IMAGE = "Image"
+
+time.sleep(5)#tämä sen takia että mysql käynnistyy, muuten tallennus ei toimi
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe(MQTT_TOPIC_TEMP)
+    client.subscribe(MQTT_TOPIC_HUMD)
+    client.subscribe(MQTT_TOPIC_IMAGE)
+
+
+	
+def on_message(client, userdata, msg):
+	print(msg.topic + " " + str(msg.payload))
+	connection=mysql.connector.connect(host="localhost",database="dht11",user="pi",password="pi")
+	cursor=connection.cursor()
+	
+	new_temp=0
+	new_humidity=0
+	
+	try:
+		
+		if(msg.topic=="Temperature"):
+			decoded_temp=msg.payload.decode("utf-8")
+			print("Incoming data:temperature "+decoded_temp)
+			new_temp=decoded_temp
+			
+		elif(msg.topic=="Humidity"):
+			decoded_humidity=msg.payload.decode("utf-8")
+			print("Incoming data:humidity "+decoded_humidity)
+			new_humidity=decoded_humidity
+		
+		else:
+			print("Incoming data is image")
+
+		mySql_insert_query="""INSERT INTO readings (temperature, humidity) VALUES (%s, %s);"""
+		new_values=(new_temp,new_humidity)
+		cursor.execute(mySql_insert_query,new_values)
+		connection.commit()
+		print(cursor.rowcount, "Record inserted successfully into readings table")
+		cursor.close()
+				
+	except mysql.connector.Error as error:
+		print("Failed to insert record into readings table {}".format(error))
+	finally:
+		if connection.is_connected():
+			connection.close()
+			print("MySQL connection is closed")
+    
+def main():
+	
+    mqtt_client = mqtt.Client()
+    mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_message = on_message
+    mqtt_client.connect(MQTT_ADDRESS, 1883)
+   
+    mqtt_client.loop_forever()
+
+ 
+
+if __name__ == "__main__":
+    main()
+    
+

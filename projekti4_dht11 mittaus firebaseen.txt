@@ -1,0 +1,83 @@
+# import libraries
+
+import RPi.GPIO as GPIO
+from picamera import PiCamera
+from datetime import datetime
+from time import sleep
+import os
+import pyrebase
+import Adafruit_DHT
+
+# set raspi GPIO-mode, define pin 17 to pushbutton
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+# firebaseconfig from firebase webpage
+firebaseConfig = {
+  'apiKey': "AIzaSyD9hU4kFJbSEhrym1-U1Zf2OBNn3-eoGUs",
+  'authDomain': "raspitesti-ab16e.firebaseapp.com",
+  'databaseURL': "https://raspitesti-ab16e-default-rtdb.europe-west1.firebasedatabase.app",
+  'projectId': "raspitesti-ab16e",
+  'storageBucket': "raspitesti-ab16e.appspot.com",
+  'messagingSenderId': "731118829967",
+  'appId': "1:731118829967:web:29e4f0256b69dfbe27cbfa",
+  'measurementId': "G-7E08JHBEFZ"
+}
+
+# initialize firebase storage for pictures
+firebase = pyrebase.initialize_app(firebaseConfig)
+storage = firebase.storage()
+
+# database for dht11 data
+db = firebase.database()
+
+# function for reading dht11 sensordata
+def sensor_read(sensor, pin):
+    humidity, temperature = Adafruit_DHT.read(sensor, pin)
+    return humidity, temperature
+
+# initialize dht11 sensor in pin 4
+dht11_sensor = Adafruit_DHT.DHT11
+sensor_pin = 4
+
+camera = PiCamera()
+
+while True:
+    try:
+        
+        # if pushbutton is pushed
+        if GPIO.input(17) == GPIO.HIGH:
+            print("nappi painettu") 
+            
+            # call function to read sensordata
+            sensor = sensor_read(dht11_sensor, sensor_pin)
+            
+            # save sensordata to variables
+            humidity = sensor[0]
+            temperature = sensor[1]
+            
+            # save data to json-dictionary
+            dht11_data = {"Temperature": temperature, "Humidity": humidity}
+            
+            # get this date
+            now = datetime.now()
+            
+            # change date to hours, minutes, seconds, day, month, year
+            dht11_date = now.strftime("%H:%M:%S %d,%m,%Y")
+
+            # save data to database
+            db.child("DHT11").child(dht11_date).set(dht11_data)            
+            print("DHT11 data tallennettu.")
+            
+            # picture settings
+            dt = now.strftime("%d%m%Y%H:%M:%S")            
+            name = dt + ".jpg"
+            camera.annotate_text = (dt)
+            camera.capture(name)
+            print(name+" tallennettu")
+            storage.child(name).put(name)
+            print("kuva lahetetty")
+
+            sleep(2)
+    except:
+        camera.close()

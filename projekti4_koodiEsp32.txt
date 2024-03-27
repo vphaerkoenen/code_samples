@@ -1,0 +1,133 @@
+#include <DHT.h>
+#include <PubSubClient.h>
+#include <WiFi.h>
+#include "thingProperties.h"
+
+#define DHTPIN 4
+#define DHTTYPE DHT11
+DHT dht(DHTPIN,DHTTYPE);
+
+// MQTT
+char* mqtt_server = "192.168.201.31"; 
+const char* humidity_topic = "Humidity";
+const char* temperature_topic = "Temperature";
+const char* mqtt_username = "pi"; // MQTT username
+const char* mqtt_password = "pi"; // MQTT password
+const char* clientID = "dht_Reporter"; // MQTT client ID
+
+// WiFi
+const char* ssid = "Redmi Note 8";                
+const char* wifi_password = "99b2f291c9d3";
+
+// Initialise the WiFi and MQTT Client objects
+WiFiClient wifiClient;
+
+//1883 is the listener port for broker
+PubSubClient client(mqtt_server, 1883, wifiClient);
+
+
+
+
+
+void setup() {
+  Serial.begin(9600);
+
+  //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ NEXT LINES ARE FOR ARDUINO CLOUD ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  // This delay gives the chance to wait for a Serial Monitor without blocking if none is found(arduino cloud)
+  delay(1500);  //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  // Defined in thingProperties.h(arduino cloud) ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  initProperties(); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  // Connect to Arduino IoT Cloud ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);//¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  setDebugMessageLevel(2); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  ArduinoCloud.printDebugInfo(); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  
+  dht.begin();
+
+  //Seuraavat on kopioitu connect_MQTT-funktiosta tähän koska yhteys katkeaa jostain syystä
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  // Connect to the WiFi
+  WiFi.begin(ssid, wifi_password);
+
+  // Wait until the connection is confirmed
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  // Debugging – Output the IP Address of the ESP8266
+  Serial.println("WiFi connected");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+  
+
+  // Connect to MQTT Broker
+  if (client.connect(clientID, mqtt_username, mqtt_password)) {
+    Serial.println("Connected to MQTT Broker!");
+  }
+  else {
+    Serial.println("Connection to MQTT Broker failed…");
+  }
+}
+
+
+
+
+void loop() {
+  //connect_MQTT();
+  Serial.setTimeout(2000);
+
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+
+  Serial.print("Humidity: ");
+  Serial.print(h);
+  Serial.println(" %");
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.println(" *C");
+
+  // MQTT can only transmit strings
+  String hs="Hum: "+String((float)h)+" % ";
+  String ts="Temp: "+String((float)t)+" C ";
+
+  // PUBLISH to the MQTT Broker (topic = Temperature)
+  if (client.publish(temperature_topic, String(t).c_str())) {
+    Serial.println("Temperature sent!");
+  }
+  else {
+    Serial.println("Temperature failed to send. Reconnecting to MQTT Broker and trying again");
+    WiFi.begin(ssid, wifi_password);
+    delay(3000);
+    client.connect(clientID, mqtt_username, mqtt_password);
+    delay(10); // This delay ensures that client.publish doesn’t clash with the client.connect call
+    client.publish(temperature_topic, String(t).c_str());
+  }
+
+  // PUBLISH to the MQTT Broker (topic = Humidity)
+  if (client.publish(humidity_topic, String(h).c_str())) {
+    Serial.println("Humidity sent!");
+  }
+  else {
+    Serial.println("Humidity failed to send. Reconnecting to MQTT Broker and trying again");
+    WiFi.begin(ssid, wifi_password);
+    delay(3000);
+    client.connect(clientID, mqtt_username, mqtt_password);
+    delay(10); // This delay ensures that client.publish doesn’t clash with the client.connect call
+    client.publish(humidity_topic, String(h).c_str());
+  }
+
+  //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ LETS UPDATE ARDUINO CLOUD ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  ArduinoCloud.update(); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  temperature = dht.readTemperature(); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  humidity = dht.readHumidity(); //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  //¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+  
+  //client.disconnect();  // disconnect from the MQTT broker
+  //delay(1000*60);       // print new values after 1 Minute
+  delay(5000); //longer delay will prevent cloud data updating
+
+}

@@ -1,0 +1,57 @@
+from picamera import PiCamera
+import RPi.GPIO as GPIO
+import paho.mqtt.client as mqtt
+import time
+import base64
+from PIL import Image
+
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(19,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)#sisäinen alasvetovastus,pinni ei muuten vakaa
+cameraon = 1
+camera = PiCamera()
+
+MQTT_ADDRESS = "192.168.201.31"
+MQTT_USER = "pi"
+MQTT_PASSWORD = "pi"
+MQTT_TOPIC_IMAGE = "Image"
+
+
+while(cameraon):
+	
+	if(GPIO.input(19)==1):
+		camera.capture("/home/pi/latestimage.jpg")
+		with open("/home/pi/latestimage.jpg","rb") as image:
+			encodedimage = image.read()
+			
+			#encodedimage = base64.b64encode(image.read())
+		
+		print("yes photo")
+		
+		def on_connect(client, userdata, flags, rc):
+			print("Connected with result code " + str(rc))
+			client.publish(MQTT_TOPIC_IMAGE,encodedimage)
+
+		def on_message(client, userdata, msg):
+			print(msg.topic + " " + str(msg.payload))
+
+
+		def main():
+			mqtt_client = mqtt.Client()
+			mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
+			mqtt_client.on_connect = on_connect
+			mqtt_client.on_message = on_message
+			mqtt_client.connect(MQTT_ADDRESS, 1883)
+			mqtt_client.loop_start()
+			mqtt_client.loop_stop()
+
+		if __name__ == "__main__":
+			main()
+			
+		time.sleep(1)#tämä sen takia ettei oteta montaa kuvaa
+
+	print("no photo")
+	time.sleep(0.1)#lukemani mukaan tämä vähentää CPU kuormaa,muuten 100%
+	
+
+    

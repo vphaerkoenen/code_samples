@@ -1,0 +1,24 @@
+Päivitystä gitiin 27.3.2024
+
+EdistynytMobiiliohjelmointi
+	- Android-puhelimen sovellus, koostuu koulutehtävistä
+	- Tehty Android-studiolla
+ 	- Oma tietokone on sen verran tehoton että android studion puhelin emulaattori ei jaksa pyöriä joten olen 
+	testaillut omalla puhelimella
+
+laskin_1
+	- kesän 2022 c++ -kurssin harjoitustyönä tehty nelilaskin
+	- tehty QT creator 7.0.2 :lla
+Netquiz
+	- omana harjoitusprojektina tehty tietovisa
+	- tehty QT creator 7.0.2 :lla
+
+uuwpharjoitukset3
+	- Visual Studio 2022 :lla tehtyjä "ohjelmointityökalut"-kurssin koulutehtäviä
+	- kielenä C#/uwp
+	- siivottu pois yksinkertaisimpia tehtäviä joten voi sisältää joitakin tarpeettomia tiedostoja
+	
+projekti4 iot raportti
+	- kurssin "iot projekti 4" -koulutehtävä
+	- komponentteina raspberry pi, dht11-anturi, pi-camera, mqtt, firebase
+	- mittaustulosten ja kuvan esitys selaimessa raspin pyörittämällä serverillä

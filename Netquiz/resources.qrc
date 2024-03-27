@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>NetquizTausta.png</file>
+        <file>ohno_sounds/09-hombre1llorawav-14436.mp3</file>
+        <file>ohno_sounds/boo-36556.mp3</file>
+        <file>ohno_sounds/boo-6377.mp3</file>
+        <file>ohno_sounds/confused-what-103562.mp3</file>
+        <file>ohno_sounds/ehhhmp3-14559.mp3</file>
+        <file>ohno_sounds/non-enthusiastic-clap-102655.mp3</file>
+        <file>ohno_sounds/ooh-123103.mp3</file>
+        <file>ohno_sounds/suspiro-tristeza-46553.mp3</file>
+        <file>yeah_sounds/aw-yeah-awww-yeah-aww-yeah-2-95782.mp3</file>
+        <file>yeah_sounds/cute-level-up-3-189853.mp3</file>
+        <file>yeah_sounds/glad-piano-logo-13394.mp3</file>
+        <file>yeah_sounds/group_yay_cheer-101509.mp3</file>
+        <file>yeah_sounds/hooray-36461.mp3</file>
+        <file>yeah_sounds/wow-121578.mp3</file>
+        <file>yeah_sounds/yay-6326.mp3</file>
+        <file>750-milliseconds-of-silence.mp3</file>
+        <file>ttsmaker-file-2024-3-24-10-47-23.mp3</file>
+    </qresource>
+</RCC>
