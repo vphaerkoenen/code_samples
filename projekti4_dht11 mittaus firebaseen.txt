@@ -14,14 +14,14 @@ GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # firebaseconfig from firebase webpage
 firebaseConfig = {
-  'apiKey': "AIzaSyD9hU4kFJbSEhrym1-U1Zf2OBNn3-eoGUs",
+  'apiKey': "",
   'authDomain': "raspitesti-ab16e.firebaseapp.com",
   'databaseURL': "https://raspitesti-ab16e-default-rtdb.europe-west1.firebasedatabase.app",
-  'projectId': "raspitesti-ab16e",
+  'projectId': "",
   'storageBucket': "raspitesti-ab16e.appspot.com",
-  'messagingSenderId': "731118829967",
-  'appId': "1:731118829967:web:29e4f0256b69dfbe27cbfa",
-  'measurementId': "G-7E08JHBEFZ"
+  'messagingSenderId': ,
+  'appId': "",
+  'measurementId': ""
 }
 
 # initialize firebase storage for pictures
