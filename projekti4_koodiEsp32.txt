@@ -17,7 +17,7 @@ const char* clientID = "dht_Reporter"; // MQTT client ID
 
 // WiFi
 const char* ssid = "Redmi Note 8";                
-const char* wifi_password = "99b2f291c9d3";
+const char* wifi_password = "";
 
 // Initialise the WiFi and MQTT Client objects
 WiFiClient wifiClient;
